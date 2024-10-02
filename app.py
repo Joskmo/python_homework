@@ -82,6 +82,20 @@ class Employee:
             raise ValueError('Название должности не может состоять из такого количества букв')
         self.__first_name = value
 
+    @hire_date.setter
+    def hire_date(self, value: str):
+        date = self.parse_date(value)
+        low_date = datetime(2000)
+        if (date > datetime.now().strftime('%d.%m.%Y') or date < low_date):
+            raise ValueError('Введена неверная дата')
+        self.__hire_date = date
+
+    @salary.setter
+    def salary(self, value: int):
+        if value < 0:
+            raise ValueError('Зарплата не может быть отрицательной')
+        self.__salary = value
+
     def full_name(self) -> str:
         return f'{self.__last_name} {self.__first_name} {self.__middle_name}'
 
