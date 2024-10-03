@@ -1,6 +1,7 @@
 from typing import List, Optional
 from datetime import datetime
 from string import capwords
+from dateutil.relativedelta import relativedelta
 import csv, re
 
 CSV_FILE_PATH = './task.csv' 
@@ -85,7 +86,7 @@ class Employee:
     @hire_date.setter
     def hire_date(self, value: str):
         date = self.parse_date(value)
-        low_date = datetime(2000)
+        low_date = datetime(2000, 1, 1)
         if (date > datetime.now().strftime('%d.%m.%Y') or date < low_date):
             raise ValueError('Введена неверная дата')
         self.__hire_date = date
@@ -98,6 +99,30 @@ class Employee:
 
     def full_name(self) -> str:
         return f'{self.__last_name} {self.__first_name} {self.__middle_name}'
+    
+    def prem_prog(self) -> int:
+        if 'программист' in self.__position:
+            return self.__salary * 0.03
+        else:
+            return None
+        
+    def prem_wom_man(self) -> int:
+        return 2000
+    
+    def index(self) -> int:
+        if relativedelta(datetime.now(), self.__hire_date).years >= 10:
+            return round(self.__salary * 1.07)
+        else:
+            return round(self.__salary * 1.05)
+        
+    def more_than_6_months(self) -> bool:
+        difference = relativedelta(datetime.now(), self.__hire_date)
+        if difference.years > 0 or difference.months > 5:
+            return True
+        else:
+            return False
+
+
 
 
 def read_employees_from_csv(file_path: str) -> List[Employee]:
@@ -123,4 +148,9 @@ employees = read_employees_from_csv(CSV_FILE_PATH)
 
 # Проверка работы
 for emp in employees:
-    print(emp.full_name(), emp.position, emp.salary)
+    # print(emp.full_name(), emp.position, emp.salary)
+    # print(emp.prem(), emp.position)
+
+
+# Замечения:
+# Сделать проверку на отсутствие отчества у сотрудника. Возможно, будет баг
