@@ -1,10 +1,8 @@
-from typing import List, Optional
-from datetime import datetime
+from typing import List
 from string import capwords
-from dateutil.relativedelta import relativedelta
 from texts import START_MSG, WRITE_FILE_MSG, MAN_WOMAN_PREM
 from Employee import Employee
-import csv, re, os, time, json
+import csv, os, time
 
 CSV_FILE_PATH = './task.csv' 
 RESULT_DIR = 'results/'
@@ -155,7 +153,3 @@ while(not exit_flag):
         print('Выход из программы...')
         time.sleep(0.5)
         clear()
-
-
-# Замечения:
-# Сделать проверку на отсутствие отчества у сотрудника. Возможно, будет баг
