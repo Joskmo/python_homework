@@ -10,7 +10,7 @@ RESULT_DIR = 'results/'
 
 class Employee:
     def __init__(self, last_name: str, first_name: str, position: str, hire_date: datetime,
-                  salary: int, sex: str, middle_name: Optional[str] = None, premium: Optional[int] = 0):
+                  salary: int, sex: str, middle_name: Optional[str] = None):
         self.__last_name = last_name
         self.__first_name = first_name
         self.__middle_name = middle_name
@@ -18,7 +18,7 @@ class Employee:
         self.__hire_date = hire_date
         self.__salary = salary
         self.__sex = sex
-        self.__premium = premium
+        self.__premium = 0
 
     @staticmethod
     def write_to_json(employees, filename):
