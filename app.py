@@ -40,6 +40,27 @@ def clear():
 employees = read_employees_from_csv(CSV_FILE_PATH)
 exit_flag = False
 
+def write_to_file(file_type: str) -> bool:
+    filename_flag = False
+    clear()
+    print(f"Выбрана запись в {file_type} файл")
+    user_file_name = input("Введите имя файла без расширения (к примеру, employees): ")
+    if user_file_name:
+        filename_flag = True
+        print(filename_flag)
+        file_name = RESULT_DIR + user_file_name + file_type
+        if (file_type) == ".csv":
+            Employee.write_to_csv(employees, file_name)
+        else:
+            Employee.write_to_json(employees, file_name)
+        clear()
+        print(f'Файл записан в: {file_name}')
+    else:
+        print("Проверьте ввод")
+        time.sleep(0.7)
+    return filename_flag
+
+
 while(not exit_flag):
     try:
         print(START_MSG)
@@ -53,38 +74,19 @@ while(not exit_flag):
                 if choose_write == '0': # назад
                     clear()
                     flag = True
+
                 elif choose_write == '1': # json
                     filename_flag = False
                     while(not filename_flag):
-                        clear()
-                        print("Выбрана запись в .json файл")
-                        user_file_name = input("Введите имя файла без расширения (к примеру, employees): ")
-                        if user_file_name:
-                            filename_flag = True
-                            file_name = RESULT_DIR + user_file_name + ".json"
-                            Employee.write_to_json(employees, file_name)
-                            clear()
-                            print(f'Файл записан в: {file_name}')
-                        else:
-                            print("Проверьте ввод")
-                            time.sleep(0.7)
+                        filename_flag = write_to_file(".json")
                     flag = True
+
                 elif choose_write == '2': # csv
                     filename_flag = False
                     while(not filename_flag):
-                        clear()
-                        print("Выбрана запись в .csv файл")
-                        user_file_name = input("Введите имя файла без расширения (к примеру, employees): ")
-                        if user_file_name:
-                            filename_flag = True
-                            file_name = RESULT_DIR + user_file_name + ".csv"
-                            Employee.write_to_csv(employees, file_name)
-                            clear()
-                            print(f'Файл записан в: {file_name}')
-                        else:
-                            print("Проверьте ввод")
-                            time.sleep(0.7)
+                        filename_flag = write_to_file(".csv")
                     flag = True
+
                 else:
                     print('Проверьте ввод')
                     time.sleep(0.7)
