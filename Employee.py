@@ -20,7 +20,7 @@ class Employee:
     def write_to_json(employees, filename):
         with open(filename, mode='w', encoding='utf-8') as file:
             json.dump([employee.to_dict() for employee in employees], file, ensure_ascii=False, indent=4)
-
+            
     @staticmethod
     def write_to_csv(employees, filename):
         with open(filename, mode='w', newline='', encoding='utf-8') as file:
@@ -32,6 +32,13 @@ class Employee:
     @staticmethod
     def parse_date(value: str) -> datetime:
         return datetime.strptime(value, '%d.%m.%Y')
+    
+    @staticmethod
+    def wage_fund(employees: list) -> int:
+        sum = 0
+        for emp in employees:
+            sum += emp.salary * 12 + emp.premium
+        return sum
     
     @property
     def last_name(self) -> str:
@@ -77,13 +84,6 @@ class Employee:
     Оклад: {self.__salary}
     Пол: {self.__sex}
     Размер премии: {self.__premium if self.__premium else 0}'''
-        
-    
-    @salary.setter
-    def salary(self, value: int):
-        if value < 0:
-            raise ValueError('Зарплата не может быть отрицательной')
-        self.__salary = value
     
     @last_name.setter
     def last_name(self, value: str):

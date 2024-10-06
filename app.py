@@ -137,6 +137,9 @@ while(not exit_flag):
                 if emp.rest():
                     print("  ", emp.full_name)
             print()
+        elif choose == '6': # Расчитать фонд оплаты труда
+            clear()
+            print(f"Годовой фонд оплаты труда: {Employee.wage_fund(employees)}")
         elif choose == '9': # Выход из программы
             exit_flag = True
         else:
