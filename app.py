@@ -2,7 +2,7 @@ from typing import List
 from string import capwords
 from texts import START_MSG, WRITE_FILE_MSG, MAN_WOMAN_PREM
 from Employee import Employee
-import csv, os, time
+import csv, os, time, re
 
 CSV_FILE_PATH = './task.csv' 
 RESULT_DIR = 'results/'
@@ -71,7 +71,7 @@ while(not exit_flag):
                 clear()
                 print(WRITE_FILE_MSG)
                 choose_write = input("Ваш выбор: ")
-                if choose_write == '0': # назад
+                if choose_write == '9': # назад
                     clear()
                     flag = True
 
@@ -95,11 +95,13 @@ while(not exit_flag):
             clear()
             for emp in employees:
                 print(emp.print_everything, '\n')
+
         elif choose == '2': # Расчёт премии ко дню программиста
             for emp in employees:
                 emp.prem_prog()
             clear()
             print('Программистам начислена премия')
+
         elif choose == '3': # Расчёт премии к 8 марта и 23 февраля
             clear()
             flag = False
@@ -107,7 +109,7 @@ while(not exit_flag):
                 clear()
                 print(MAN_WOMAN_PREM)
                 choose_man_wom = input("Ваш выбор: ")
-                if choose_man_wom == '0': # назад
+                if choose_man_wom == '9': # назад
                     clear()
                     flag = True
                 elif choose_man_wom == '1': # 23.02
@@ -125,11 +127,13 @@ while(not exit_flag):
                 else:
                     print('Проверьте ввод')
                     time.sleep(0.7)
+
         elif choose == '4': # Расчёт индексации зарплат
             for emp in employees:
                 emp.index()
             clear()
             print("Зарплаты проиндексированы")
+
         elif choose == '5': # Получить список сотрудников, которым положен отпуск
             clear()
             print("Отпуск положен следующим сотрудникам:")
@@ -137,9 +141,20 @@ while(not exit_flag):
                 if emp.rest():
                     print("  ", emp.full_name)
             print()
+
         elif choose == '6': # Расчитать фонд оплаты труда
             clear()
-            print(f"Годовой фонд оплаты труда: {Employee.wage_fund(employees)}")
+            print(f"Годовой фонд оплаты труда: {Employee.wage_fund(employees)} рублей")
+
+        elif choose == '7':
+            clear()
+            Employee.diagram(employees)
+
+        elif choose == '8':
+            clear()
+            print(Employee.taxes_counter(employees[0]))
+            # дописать функционал: вывод списка сотрудников, сохранение json для всех сотрудников, сохранение json для конкретного сотрудника
+
         elif choose == '9': # Выход из программы
             exit_flag = True
         else:
