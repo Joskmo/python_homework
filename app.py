@@ -5,7 +5,6 @@ from Employee import Employee
 import csv, os, time, re, json
 
 CSV_FILE_PATH = './task.csv' 
-RESULT_DIR = 'results/'
 
 def read_employees_from_csv(file_path: str) -> List[Employee]:
     employees = []
@@ -47,7 +46,7 @@ def write_to_file(file_type: str) -> bool:
     if user_file_name:
         filename_flag = True
         print(filename_flag)
-        file_name = RESULT_DIR + user_file_name + file_type
+        file_name = user_file_name + file_type
         if (file_type) == ".csv":
             Employee.write_to_csv(employees, f'csv/{file_name}')
         else:
