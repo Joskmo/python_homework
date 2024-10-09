@@ -1,5 +1,7 @@
 *.csv
+!sample*.csv
 *.json
+!sample*.json
 !task.csv
 __pycache__/
 .venv
