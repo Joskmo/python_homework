@@ -1,8 +1,8 @@
 from typing import List
 from string import capwords
-from texts import START_MSG, WRITE_FILE_MSG, MAN_WOMAN_PREM
+from texts import START_MSG, WRITE_FILE_MSG, MAN_WOMAN_PREM, TAXES_TEXT
 from Employee import Employee
-import csv, os, time, re
+import csv, os, time, re, json
 
 CSV_FILE_PATH = './task.csv' 
 RESULT_DIR = 'results/'
@@ -36,7 +36,6 @@ def clear():
     else:
         os.system('clear')
     
-
 employees = read_employees_from_csv(CSV_FILE_PATH)
 exit_flag = False
 
@@ -50,15 +49,36 @@ def write_to_file(file_type: str) -> bool:
         print(filename_flag)
         file_name = RESULT_DIR + user_file_name + file_type
         if (file_type) == ".csv":
-            Employee.write_to_csv(employees, file_name)
+            Employee.write_to_csv(employees, f'csv/{file_name}')
         else:
-            Employee.write_to_json(employees, file_name)
+            Employee.write_to_json(employees, f'json/{file_name}')
         clear()
         print(f'Файл записан в: {file_name}')
     else:
         print("Проверьте ввод")
         time.sleep(0.7)
     return filename_flag
+
+
+def tax_parser(data: dict) -> str:
+    MONTHS = ("январь", "февраль", "март", "апрель", "май", "июнь",
+              "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь", "итого")
+    text = ""
+    for month, details in data.items():
+        if month != 13:
+            text +=\
+f'''Данные на {MONTHS[month - 1]}:
+    Оклад: {details['salary']}
+    Премия: {details['premium']}
+    Налоги
+        НДФЛ: {details['taxes']['НДФЛ']}
+        ФСС: {details['taxes']['ФСС']}
+    Итоговая сумма на выплату работодателем за месяц: {details['month_sum']}
+'''
+        else:
+            text += '-' * 40
+            text += f"\nСумма всех выплат за год: {data[13]}\n"
+    return text
 
 
 while(not exit_flag):
@@ -152,7 +172,66 @@ while(not exit_flag):
 
         elif choose == '8':
             clear()
-            print(Employee.taxes_counter(employees[0]))
+            print(TAXES_TEXT)
+            while(1):
+                tax_choose = input("Ваш выбор: ")
+                if tax_choose == '1':
+                    clear()
+                    print("Список сотрудников: ")
+                    counter = 1
+                    for emp in employees:
+                        print(f'{counter}. {emp.full_name}')
+                        counter += 1
+                    while(1):
+                        emp_choose = input("Выберите сотрудника (используйте номер из списка выше): ")
+                        if re.fullmatch(r'\d+', emp_choose):
+                            emp_choose = int(emp_choose)
+                            if emp_choose > 0 and emp_choose <= counter:
+                                clear()
+                                taxes = Employee.taxes_counter(employees[emp_choose-1])
+                                print(f'Для сотрудника {employees[emp_choose-1].full_name}:')
+                                print(tax_parser(taxes))
+                                print(\
+f'''Желаете сохранить данные для "{employees[emp_choose-1].full_name}" в json файл?
+    1. Да
+    Нет - любое другое значение''')
+                                save_choose = input('Ваш выбор: ')
+                                if save_choose == '1':
+                                    filename = input("Введите имя файла (без расширения), в который хотите сохранить результат: ")
+                                    while not re.fullmatch(r'^(?!.*\.\.)(?!.*\.$)(?!^\.)(?!.*\/)(?!.*\\)[\w\-.]+$', 
+                                                           filename):
+                                        filename = input("Проверьте введое имя и повторите ввод: ")
+                                    filepath = f'json/{filename}.json'
+                                    emp_dict = {employees[emp_choose-1].full_name: taxes}
+                                    with open(filepath, 'w', encoding='utf-8') as file:
+                                        json.dump(emp_dict, fp=file, ensure_ascii=False, indent=4)
+                                    clear()
+                                    print(f'Данные по сотруднику "{employees[emp_choose-1].full_name}" успешно сохранены в: "{filepath}"\n')
+                                else:
+                                    clear()
+                                break
+                            else:
+                                print("Проверьте ввод")
+                        else:
+                            print('Проверьте ввод')
+                    break
+                elif tax_choose == '2': # все в json
+                    filename = input("Введите имя файла (без расширения), в который хотите сохранить результат: ")
+                    while not re.fullmatch(r'^(?!.*\.\.)(?!.*\.$)(?!^\.)(?!.*\/)(?!.*\\)[\w\-.]+$', 
+                                filename):
+                        filename = input("Проверьте введое имя и повторите ввод: ")
+                    filepath = f'json/{filename}.json'
+                    emp_dict = {emp.full_name: Employee.taxes_counter(emp) for emp in employees}
+                    with open(filepath, 'w', encoding='utf-8') as file:
+                        json.dump(emp_dict, fp=file, ensure_ascii=False, indent=4)
+                    clear()
+                    print(f'Налоговые отчисления успешно сохранены в: {filepath}\n')
+                    break                    
+                elif tax_choose == '9':
+                    clear()
+                    break
+                else:
+                    print("Проверьте ввод")
             # дописать функционал: вывод списка сотрудников, сохранение json для всех сотрудников, сохранение json для конкретного сотрудника
 
         elif choose == '9': # Выход из программы

@@ -60,8 +60,10 @@ class Employee:
             choose = input("Открыть окно с диаграммой? (y/n) ")
             if choose == 'y': 
                 pyplot.show()
+                pyplot.close()
                 break
             elif choose == 'n':
+                pyplot.close()
                 break
             else:
                 print("Проверьте ввод")
@@ -202,6 +204,7 @@ class Employee:
     def taxes_counter(self) -> dict:
         sum_salary_prem = 0
         result = {}
+        total_sum = 0
         for month in range(1, 13):
             month_prem = 0
             if (month == 2 and self.__sex == 'М') or (month == 3 and self.__sex == 'Ж'):
@@ -216,14 +219,17 @@ class Employee:
             else:
                 personal_inc_tax = round(self.__salary * 0.15, 2)
             sum_salary_prem += self.__salary + month_prem
+            month_sum = self.__salary + round((self.__salary + month_prem) * 0.3, 2)
+            total_sum += month_sum
             result[month] = {
                 'salary': self.__salary,
                 'premium': month_prem,
                 'taxes': {
                     'НДФЛ': personal_inc_tax,
-                    'ФСС': round((self.__salary + month_prem) * 0.22, 2)
+                    'ФСС': round((self.__salary + month_prem) * 0.3, 2)
                 },
-                'sum': self.__salary + round((self.__salary + month_prem) * 0.22, 2)
+                'month_sum': month_sum
             }
+        result[13] = total_sum
         return result
     
